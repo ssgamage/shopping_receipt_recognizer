@@ -1,0 +1,53 @@
+{
+  "raw_text": "RESTAURANT\n\nLorem Ipsum 323\n\nCity Index - 01234\n\nTel: +123-456-789.0)\n\n\"TAX INVOICE\n\nCASH RECEIPT\nTable 12 Cashiersn\nBillt# 000-000 12.12.2020\nName Qty Total\nChicken Carry 1 1.00\nFried Chicken 2 1000\nCheeseBurger 2 800\nBeer 2 800\nWater 2 2.00\nKetchup 1 100\nSoy Sauce 1 100\nOther 2 10.00\nstpnngaagasgststsseennsccssessese3¢\nSub Total 51.00\nCash 60.00\nChange 9.00\n\nHil It | 125 678 GIO |\nThank You!\nPlease Come Again\nJ",
+  "merchant": "RESTAURANT",
+  "cashier": "Billt",
+  "bill_no": "000-000",
+  "items": [
+    {
+      "name": "Chicken Carry",
+      "qty": 1,
+      "price": 1.0
+    },
+    {
+      "name": "Fried Chicken",
+      "qty": 2,
+      "price": 1000.0
+    },
+    {
+      "name": "CheeseBurger",
+      "qty": 2,
+      "price": 800.0
+    },
+    {
+      "name": "Beer",
+      "qty": 2,
+      "price": 800.0
+    },
+    {
+      "name": "Water",
+      "qty": 2,
+      "price": 2.0
+    },
+    {
+      "name": "Ketchup",
+      "qty": 1,
+      "price": 100.0
+    },
+    {
+      "name": "Soy Sauce",
+      "qty": 1,
+      "price": 100.0
+    },
+    {
+      "name": "Other",
+      "qty": 2,
+      "price": 10.0
+    }
+  ],
+  "subtotal": 51.0,
+  "total": 51.0,
+  "cash": 60.0,
+  "change": 9.0,
+  "other_fields": {}
+}
