@@ -1,0 +1,19 @@
+# create .gitignore
+
+#"venv/
+#outputs/
+#__pycache__/
+#*.pyc
+#.env
+dist/
+build/
+CGV_Group_9.spec
+gui_app.spec
+
+#" > .gitignore
+
+# initialize repo (optional)
+
+#git init
+#git add .
+#git commit -m "Initial project skeleton"
