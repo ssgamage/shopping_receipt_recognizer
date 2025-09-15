@@ -79,3 +79,36 @@ class ReceiptProcessor:
         if self.show:
             show_window("Blur", blur)
 
+        # Detect edges using Canny
+        edges = cv2.Canny(blur, config.CANNY_THRESHOLDS[0], config.CANNY_THRESHOLDS[1])
+        if self.save_steps:
+            steps_saved["edges"] = save_step(edges, out_dir, base, "edges", png_params=config.PNG_PARAMS)
+        if self.show:
+            show_window("Edges", edges)
+
+        # Find contours and attempt perspective correction (deskew basics)
+        warped = None
+        cnts, _ = cv2.findContours(edges.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:10]
+        receipt_quad = None
+        for c in cnts:
+            peri = cv2.arcLength(c, True)
+            approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+            if len(approx) == 4:  # Found quadrilateral (possible receipt boundary)
+                receipt_quad = approx.reshape(4, 2).astype("float32")
+                break
+
+        if receipt_quad is not None:
+            try:
+                warped = four_point_transform(gray, receipt_quad)
+                if self.save_steps:
+                    steps_saved["warped"] = save_step(warped, out_dir, base, "warped", png_params=config.PNG_PARAMS)
+                if self.show:
+                    show_window("Warped", warped)
+            except Exception:
+                warped = None
+
+        # Use warped image if available, otherwise fallback to grayscale
+        working = warped if warped is not None else gray
+
+
