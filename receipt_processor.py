@@ -49,3 +49,33 @@ class ReceiptProcessor:
         base = stem(image_path)
         steps_saved = {}
         out_dir = config.OUTPUT_DIR
+
+        # Load image
+        image = cv2.imread(image_path)
+        if image is None:
+            raise FileNotFoundError(f"Cannot read image: {image_path}")
+        if self.save_steps:
+            steps_saved["orig"] = save_step(image, out_dir, base, "orig", png_params=config.PNG_PARAMS)
+
+        # Convert to grayscale
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        if self.save_steps:
+            steps_saved["gray"] = save_step(gray, out_dir, base, "gray", png_params=config.PNG_PARAMS)
+        if self.show:
+            show_window("Grayscale", gray)
+
+        # Apply CLAHE for local contrast enhancement
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        eq = clahe.apply(gray)
+        if self.save_steps:
+            steps_saved["clahe"] = save_step(eq, out_dir, base, "clahe", png_params=config.PNG_PARAMS)
+        if self.show:
+            show_window("CLAHE", eq)
+
+        # Apply Gaussian Blur to reduce noise
+        blur = cv2.GaussianBlur(eq, config.GAUSSIAN_BLUR_KSIZE, 0)
+        if self.save_steps:
+            steps_saved["blur"] = save_step(blur, out_dir, base, "blur", png_params=config.PNG_PARAMS)
+        if self.show:
+            show_window("Blur", blur)
+
