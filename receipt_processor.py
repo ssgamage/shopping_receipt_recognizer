@@ -111,4 +111,44 @@ class ReceiptProcessor:
         # Use warped image if available, otherwise fallback to grayscale
         working = warped if warped is not None else gray
 
+        # Apply thresholding (Adaptive or Otsu)
+        if self.adaptive:
+            th = cv2.adaptiveThreshold(
+                working, 255,
+                cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                cv2.THRESH_BINARY,
+                config.ADAPTIVE_BLOCK_SIZE,
+                config.ADAPTIVE_C
+            )
+            th_tag = "th_adaptive"
+        else:
+            _, th = cv2.threshold(working, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            th_tag = "th_otsu"
+
+        if self.save_steps:
+            steps_saved[th_tag] = save_step(th, out_dir, base, th_tag, png_params=config.PNG_PARAMS)
+        if self.show:
+            show_window("Threshold", th)
+
+        # Apply morphological operations (opening then closing)
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, config.MORPH_KERNEL_SIZE)
+        opened = cv2.morphologyEx(th, cv2.MORPH_OPEN, kernel, iterations=config.MORPH_OPEN_ITER)
+        closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, kernel, iterations=config.MORPH_CLOSE_ITER)
+        if self.save_steps:
+            steps_saved["morph_open"] = save_step(opened, out_dir, base, "morph_open", png_params=config.PNG_PARAMS)
+            steps_saved["morph_close"] = save_step(closed, out_dir, base, "morph_close", png_params=config.PNG_PARAMS)
+        if self.show:
+            show_window("Morph Open", opened)
+            show_window("Morph Close", closed)
+
+        # Return final processed result
+        result = ProcessResult(
+            ocr_ready=closed,
+            gray=gray,
+            steps=steps_saved,
+            warped=warped
+        )
+        return base, result
+
+
 
